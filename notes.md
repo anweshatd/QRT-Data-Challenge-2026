@@ -77,3 +77,67 @@
 - What patterns do the 4 different GROUPs represent?
 - Are certain allocations more predictable than others?
 - Does temporal information matter even though dates are shuffled?
+
+## Second (V2) and V2.5 optimised but worst performing models
+
+- Feature engineering and hyperparameter tunig
+- Created 18 new engineered features
+- Tested different hyperparameter configurations
+
+#### Feature Engineering
+**New features created:**
+- Moving averages (RET_AVG_3, 5, 10, 15, 20)
+- Volatility (RET_STD_5, 10, 20)
+- Momentum (MOMENTUM_SHORT, MOMENTUM_LONG)
+- Cross-allocation comparisons (RELATIVE_PERF_5, 10, 20)
+- Trend direction (POSITIVE_DAYS_5, 10)
+
+**Results:**
+- Baseline CV: 53.65%
+- With features CV: 54.61%
+- Improvement: +0.96%
+
+#### Hyperparameter Tuning
+Tested 11 different configurations:
+- Best CV: 55.92% (n_estimators=200, lr=0.07)
+- Original: 54.61% (n_estimators=100, lr=0.05)
+
+#### Leaderboard Submissions
+1. Baseline (no features): 0.5090 (rank ~450)
+2. With features: 0.5118 (rank#391) **BEST**
+3. Optimised hyperparams: 0.5047 (rank would be ~500)  **OVERFITTING**
+
+#### Key Learnings
+
+**The Overfitting Problem:**
+- CV scores kept improving (53.65% → 54.61% → 55.92%)
+- Leaderboard scores got WORSE (50.90% → 51.18% → 50.47%)
+- Gap between CV and leaderboard grew (2.7% → 3.4% → 5.5%)
+
+**Critical lesson:** Optimising for CV score can hurt real performance
+
+**What went wrong:**
+- More trees + higher learning rate = memorised training patterns
+- Features that work on training data don't generalise to test
+- Need to be more conservative with complexity
+
+#### What Worked
+✅ Feature engineering (modest improvement: +0.28% on leaderboard)
+✅ Keeping it simple (baseline features > over-optimised)
+
+#### What Didn't Work
+- Aggressive hyperparameter tuning (overfitted severely)
+- Trusting CV scores blindly
+- Adding complexity without validation on hold-out test
+
+### Questions to Explore
+- Why is CV-to-leaderboard gap so large?
+- Are we validating on the wrong distribution?
+- Would simpler features work better?
+- Should we use fewer features, not more?
+
+### Important Reminder
+**Best model so far: Feature engineering with default hyperparameters**
+- Don't always chase higher CV scores
+- Simplicity often beats complexity
+- Real test performance > validation performance
