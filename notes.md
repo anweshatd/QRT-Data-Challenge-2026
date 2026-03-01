@@ -122,8 +122,8 @@ Tested 11 different configurations:
 - Need to be more conservative with complexity
 
 #### What Worked
-✅ Feature engineering (modest improvement: +0.28% on leaderboard)
-✅ Keeping it simple (baseline features > over-optimised)
+- Feature engineering (modest improvement: +0.28% on leaderboard)
+- Keeping it simple (baseline features > over-optimised)
 
 #### What Didn't Work
 - Aggressive hyperparameter tuning (overfitted severely)
@@ -141,3 +141,42 @@ Tested 11 different configurations:
 - Don't always chase higher CV scores
 - Simplicity often beats complexity
 - Real test performance > validation performance
+
+## Third ensemble and only Random Forest model(s)
+
+#### What I Did
+- Tested 4 different models individually
+- Tried ensemble averaging
+- Learned that simpler ≠ always worse
+
+#### Models Tested (5-fold CV scores)
+- Random Forest: 52.60%
+- XGBoost: 52.43%
+- LightGBM Simple: 52.40%
+- Logistic Regression: 50.77%
+
+#### Ensemble Results
+- All 4 models: 52.45% (worse than RF alone)
+- Tree models only: 52.51% (still worse)
+- **Conclusion:** Models too similar, no diversity benefit
+
+#### Leaderboard Submissions
+- Random Forest: 0.5101 (rank ~430)
+- **Still best: LightGBM + Features: 0.5118** 
+
+#### Key Learnings
+- Ensemble only helps if models are diverse (make different mistakes)
+- The tree models all learned same patterns → no benefit from averaging
+- Simpler models = better generalisation (smaller CV-to-leaderboard gap)
+- Gap analysis:
+  - Optimized model: 5.5% gap (severe overfitting)
+  - Random Forest: 1.6% gap (good generalisation)
+  - LightGBM + features: 3.4% gap (moderate overfitting)
+
+#### What Worked
+- Testing multiple models to understand their behavior
+- Conservative hyperparameters (prevent overfitting)
+
+#### What Didn't Work
+- Ensemble (models not diverse enough)
+- Including weak model (LogReg) in ensemble
